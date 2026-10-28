@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Seni Online Premium</title>
+    <style>
+        /* Pengaturan Dasar & Tipografi */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(45deg,pink,white,pink);
+            color: #111111;
+            line-height: 1.6;
+            text-shadow:2px 2px 4px gold;
+        }
+
+        /* Navigasi / Header Atas */
+        header {
+            position: sticky;
+            top: 0;
+            background-image:url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTZa7iyiOPyXmQJpHz2yS_IiuXMg3MRt_uD3VelWZI9A&s=10); /* Warna dasar jika gambar belum diisi */
+            background-position: center;
+            background-size: cover;
+            border-bottom: 1px solid #eeeeee;
+            z-index: 1000;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Area Logo & Foto Profil */
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Jarak antara foto profil dan teks galeri */
+        }
+        .profile-img {
+            width: 80px;
+            box-shadow: 0 0 25px yellow;
+            height: 80px;
+            border-radius: 50%; /* Membuat foto menjadi bulat sempurna */
+            object-fit: cover;
+            background-image:url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTZa7iyiOPyXmQJpHz2yS_IiuXMg3MRt_uD3VelWZI9A&s=10); /* Warna dasar jika gambar belum diisi */
+            border: 1px solid #dddddd;
+        }
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Menu Navigasi */
+        nav a {
+            text-decoration: none;
+            color: #666666;
+            margin-left: 30px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #000000;
+        }
+
+        /* Profil Seniman / Spanduk Utama */
+        .artist-profile {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        .artist-profile h1 {
+            font-size: 42px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .artist-profile p {
+            font-size: 16px;
+            color: #666666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Grid Galeri Foto */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 10px;
+            max-width: 1400px;
+            margin: 0 auto 80px auto;
+            padding: 10px 10px;
+        }
+
+        /* Item Setiap Karya */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        .gallery-item img {
+            width: 80%;
+            height: 500px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.04);
+        }
+
+        /* Informasi Detail di Bawah Gambar */
+        .item-info {
+            padding: 15px 5px;
+        }
+        .item-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+        .item-details {
+            font-size: 13px;
+            color: #777777;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid #eeeeee;
+            font-size: 12px;
+            color: #999999;
+            letter-spacing: 1px;
+        }
+
+        /* Responsif untuk Layar Handphone */
+        @media (max-width: 768px) {
+            header { padding: 20px; flex-direction: column; gap: 15px; text-align: center; }
+            .brand-container { flex-direction: column; gap: 8px; }
+            nav a { margin: 0 10px; }
+            .artist-profile h1 { font-size: 32px; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .gallery-item img { height: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigasi Atas -->
+    <header>
+        <!-- Wadah untuk Foto Profil + Teks Logo -->
+        <div class="brand-container">
+            <!-- GANTI 'profil.jpg' dengan file foto profil Anda sendiri -->
+            <img src="photo.jpeg" alt="Logo Profil" class="profile-img">
+            <div class="logo">Adinda Gallery</div>
+        </div>
+        
+        <nav>
+            <a href="#">Koleksi</a>
+            <a href="#">Tentang Saya</a>
+            <a href="#">Kontak</a>
+        </nav>
+    </header>
+
+    <!-- Header Profil Seniman -->
+    <section class="artist-profile">
+        <h1>Nama Anda / Nama Koleksi</h1>
+        <p>Tuliskan deskripsi singkat, visi seni, atau konsep dari karya-karya fotografi/lukisan premium yang Anda pamerkan di sini.</p>
+    </section>
+
+    <!-- Grid Tempat Foto Anda Dimasukkan -->
+    <main class="gallery-grid">
+
+        <!-- KARYA 1 -->
+        <div class="gallery-item">
+            <img src="photo (3).jpeg" alt="Judul Karya 1">
+            <div class="item-info">
+                <div class="item-title">Judul Karya Seni I</div>
+                <div class="item-details">Edisi Terbatas • Cetak Kanvas Premium • 2026</div>
+            </div>
+        </div>
+
+        <!-- KARYA 2 -->
+        <div class="gallery-item">
+            <img src="photo (2).jpeg" alt="Judul Karya 2">
+            <div class="item-info">
+                <div class="item-title">Judul Karya Seni II</div>
+                <div class="item-details">Edisi Terbatas • Cetak Logam Premium • 2026</div>
+            </div>
+        </div>
+
+        <!-- KARYA 3 -->
+        <div class="gallery-item">
+            <img src="foto3.jpg" alt="Judul Karya 3">
+            <div class="item-info">
+                <div class="item-title">Judul Karya Seni III</div>
+                <div class="item-details">Edisi Terbatas • Fotografi Monokrom • 2026</div>
+            </div>
+        </div>
+
+        <!-- KARYA 4 -->
+        <div class="gallery-item">
+            <img src="foto4.jpg" alt="Judul Karya 4">
+            <div class="item-info">
+                <div class="item-title">Judul Karya Seni IV</div>
+                <div class="item-details">Edisi Terbatas • Fine Art Print • 2026</div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bagian Kaki Halaman -->
+    <footer>
+        &copy; 2026 Hak Cipta Dilindungi Undang-Undang. Dibuat untuk Portofolio Seni Digital.
+    </footer>
+
+</body>
+</html>

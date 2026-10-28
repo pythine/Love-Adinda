@@ -8,11 +8,35 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <section id="loginGate" class="login-gate">
+  <form id="loginForm" class="login-card">
+    <div class="login-heart">♥</div>
+    <p class="eyebrow">PRIVATE LOVE SPACE</p>
+    <h1>Tempat kecil <span>untuk kita</span></h1>
+    <p class="login-description">
+      Masukkan akun untuk membuka kejutan romantis ini. ♡
+    </p>
+
+    <label for="loginUsername">Username</label>
+    <input id="loginUsername" name="username" type="text"
+      placeholder="Masukkan username" autocomplete="username" required />
+
+    <label for="loginPassword">Password</label>
+    <input id="loginPassword" name="password" type="password"
+      placeholder="Masukkan password" autocomplete="current-password" required />
+
+    <p id="loginError" class="login-error" role="alert"></p>
+    <button type="submit" class="btn btn-yes login-submit">
+      Masuk ke dunia kita ♡
+    </button>
+  </form>
+</section>
   <div class="starfield" aria-hidden="true"></div>
   <div class="floating-hearts" id="floatingHearts" aria-hidden="true"></div>
   <header class="topbar">
     <div class="brand"><span class="brand-mark">♡</span><span>little love universe</span></div>
     <div class="top-actions"><span id="roomLabel">RUANG 01 / 04</span><button class="music-toggle" id="musicToggle" aria-label="Putar atau jeda musik">♫ <span id="musicState">Musik mati</span></button></div>
+    <a class="gallery-link" href="Galery.html">♡ Galeri</a>
   </header>
 
   <main>

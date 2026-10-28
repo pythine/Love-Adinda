@@ -1,11 +1,15 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-  const rooms = ['room1','room2','room3','room4'];
+
+  // ========== SETTING LOGIN DI SINI ==========
+  const VALID_USER = "adinda"; // ganti username
+  const VALID_PASS = "sayang";  // ganti password
+  // ===========================================
+
+  const rooms = ['room1', 'room2', 'room3', 'room4'];
   let currentRoom = 0;
   let audioCtx = null, masterGain = null, musicOn = false;
 
-  // GANTI FILE MP3 DI SINI
-  // Simpan lagu di folder music/ dengan nama romantis.mp3
   const backgroundMusic = new Audio('Romantis.mp3');
   backgroundMusic.loop = true;
   backgroundMusic.volume = 0.45;
@@ -22,6 +26,7 @@
 
   function showToast(text) {
     const t = $('toast');
+    if (!t) return;
     t.textContent = text;
     t.classList.add('show');
     clearTimeout(showToast.timer);
@@ -30,16 +35,63 @@
 
   function goToRoom(index) {
     currentRoom = index;
-    rooms.forEach((id, i) => $(id).classList.toggle('active', i === index));
-    $('roomLabel').textContent = `RUANG 0${index + 1} / 04`;
+    rooms.forEach((id, i) => {
+      const room = $(id);
+      if (room) room.classList.toggle('active', i === index);
+    });
+    if ($('roomLabel')) $('roomLabel').textContent = `RUANG 0${index + 1} / 04`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (index === 2 && messageIndex === 0) showMessage();
-    if (index === 3) {
-      $('arenaHint').textContent = gameRunning ? '' : 'Tekan “Mulai bermain” untuk menangkap hati 💕';
+  }
+
+  // ========== LOGIC LOGIN BARU ==========
+  function handleLogin(e) {
+    e.preventDefault();
+    const user = $('loginUsername')?.value.trim().toLowerCase() || "";
+    const pass = $('loginPassword')?.value.trim().toLowerCase() || "";
+    const errorEl = $('loginError');
+
+    if (user === VALID_USER && pass === VALID_PASS) {
+      // Sukses
+      if (errorEl) errorEl.textContent = "";
+      const gate = $('loginGate');
+      if (gate) {
+        gate.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+        gate.style.opacity = "0";
+        gate.style.transform = "scale(1.05)";
+        setTimeout(() => {
+          gate.style.display = "none";
+          goToRoom(0);
+          firstChoice();
+          showToast(`Hai Adinda! Selamat datang ♡`);
+        }, 600);
+      }
+      // simpan login biar gak login lagi
+      localStorage.setItem('isLoggedIn', 'true');
+    } else {
+      if (errorEl) errorEl.textContent = "Username atau password salah, coba lagi yaa 🙈";
+      const card = document.querySelector('.login-card');
+      if(card){
+        card.animate([{transform: 'translateX(0)'}, {transform: 'translateX(-8px)'}, {transform: 'translateX(8px)'}, {transform: 'translateX(0)'}], {duration: 300});
+      }
     }
   }
 
-  // AudioContext hanya untuk efek suara mini game.
+  // Cek kalau sudah pernah login
+  function checkExistingLogin() {
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      const gate = $('loginGate');
+      if (gate) gate.style.display = "none";
+      goToRoom(0);
+    } else {
+      // pastikan loginGate kelihatan
+      const gate = $('loginGate');
+      if (gate) gate.style.display = "flex";
+      rooms.forEach(id => $(id)?.classList.remove('active'));
+    }
+  }
+  // ======================================
+
   function ensureAudio() {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return false;
@@ -54,7 +106,7 @@
   }
 
   function playNote(freq, start, duration, type = 'sine', volume = 0.23) {
-    if (!audioCtx || !masterGain) return;
+    if (!ensureAudio() || !masterGain) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = type;
@@ -72,102 +124,58 @@
     if (musicOn && !backgroundMusic.paused) return;
     backgroundMusic.play().then(() => {
       musicOn = true;
-      $('musicState').textContent = 'Musik menyala';
-      $('musicToggle').classList.add('playing');
+      if ($('musicState')) $('musicState').textContent = 'Musik menyala';
+      $('musicToggle')?.classList.add('playing');
     }).catch(() => {
-      musicOn = false;
-      $('musicState').textContent = 'Klik lagi untuk memutar musik';
-      $('musicToggle').classList.remove('playing');
-      showToast('Periksa file music/romantis.mp3');
+      if ($('musicState')) $('musicState').textContent = 'Klik lagi untuk memutar musik';
     });
   }
-
   function stopMusic() {
     backgroundMusic.pause();
     musicOn = false;
-    $('musicState').textContent = 'Musik mati';
-    $('musicToggle').classList.remove('playing');
+    if ($('musicState')) $('musicState').textContent = 'Musik mati';
+    $('musicToggle')?.classList.remove('playing');
   }
+  function firstChoice() { startMusic(); ensureAudio(); }
 
-  backgroundMusic.addEventListener('ended', () => {
-    musicOn = false;
-    $('musicState').textContent = 'Musik mati';
-    $('musicToggle').classList.remove('playing');
-  });
-
-  function firstChoice() { startMusic(); }
-
-  $('firstYes').addEventListener('click', () => {
-    firstChoice();
-    goToRoom(1);
-    showToast('Yay! Satu langkah lebih dekat ke hatiku. ♡');
-  });
-
+  // ROOM 1
+  $('firstYes')?.addEventListener('click', () => { firstChoice(); goToRoom(1); showToast('Yay! Satu langkah lebih dekat ke hatiku. ♡'); });
   const noBtn = $('firstNo');
-
   function dodgeNo() {
-    firstChoice();
-    const maxX = Math.max(0, Math.min(140, window.innerWidth / 2 - 90));
+    if (!noBtn || window.matchMedia('(hover: none)').matches) return;
+    const maxX = Math.min(140, window.innerWidth / 2 - 90);
     const x = (Math.random() * 2 - 1) * maxX;
     const y = (Math.random() * 2 - 1) * 25;
     noBtn.style.transform = `translate(${x}px, ${y}px)`;
-    $('firstNote').textContent = [
-      'Hehe, coba lagi dong 🙈',
-      'Eits, tombolnya malu dipilih! 💗',
-      'Kayaknya tombol No ingin bilang Yes. 😚',
-      'Yakin nih? Kasih aku satu kesempatan.'
-    ][Math.floor(Math.random() * 4)];
-    if (window.matchMedia('(hover: none)').matches) {
-      noBtn.style.transform = 'translate(0,0)';
-    }
   }
+  noBtn?.addEventListener('pointerenter', dodgeNo);
+  noBtn?.addEventListener('click', (e) => { e.preventDefault(); firstChoice(); dodgeNo(); });
 
-  noBtn.addEventListener('pointerenter', () => {
-    if (!window.matchMedia('(hover: none)').matches) dodgeNo();
+  // ROOM 2
+  $('certYes')?.addEventListener('click', () => { startMusic(); goToRoom(2); });
+  $('certNo')?.addEventListener('click', () => {
+    const btnNo = $('certNo');
+    if ($('certNote')) $('certNote').textContent = 'Nggak apa-apa, sertifikat ini akan tetap menunggumu dengan manis. ♡';
+    btnNo.textContent = 'Oke, aku terima ♡';
+    btnNo.className = 'btn btn-yes';
+    btnNo.onclick = () => goToRoom(2);
   });
-  noBtn.addEventListener('click', () => {
-    firstChoice();
-    dodgeNo();
-  });
+  $('logoPopup')?.addEventListener('click', () => { startMusic(); $('logoModal')?.classList.add('show'); });
+  const closeModal = () => $('logoModal')?.classList.remove('show');
+  $('closeModal')?.addEventListener('click', closeModal);
+  $('modalOkay')?.addEventListener('click', closeModal);
+  $('logoModal')?.addEventListener('click', e => { if (e.target === $('logoModal')) closeModal(); });
 
-  $('certYes').addEventListener('click', () => {
-    startMusic();
-    goToRoom(2);
-    showToast('Sertifikat diterima! Semoga senyummu ikut hadir. 💞');
-  });
-
-  $('certNo').addEventListener('click', () => {
-    startMusic();
-    $('certNote').textContent = 'Nggak apa-apa, sertifikat ini akan tetap menunggumu dengan manis. ♡';
-    showToast('Sertifikatnya tetap berlaku di dunia imajinasi 😌');
-    $('certNo').textContent = 'Oke, aku terima ♡';
-    $('certNo').classList.remove('btn-no');
-    $('certNo').classList.add('btn-yes');
-    $('certNo').onclick = () => goToRoom(2);
-  });
-
-  $('logoPopup').addEventListener('click', () => {
-    $('logoModal').classList.add('show');
-    startMusic();
-  });
-
-  function closeModal() { $('logoModal').classList.remove('show'); }
-  $('closeModal').addEventListener('click', closeModal);
-  $('modalOkay').addEventListener('click', closeModal);
-  $('logoModal').addEventListener('click', e => {
-    if (e.target === $('logoModal')) closeModal();
-  });
-
+  // ROOM 3
   function showMessage() {
     const stage = $('messageStage');
+    if (!stage) return;
     if (messageIndex >= messages.length) {
       stage.innerHTML = '<span class="line">Semua pesanku sudah terbuka. Tapi rasa sayangku masih terus bertambah. ♥</span>';
-      $('nextMessage').textContent = 'Masuk ke mini game ♡';
-      $('messageCounter').textContent = '4 / 4 pesan terbuka';
-      $('nextMessage').onclick = () => goToRoom(3);
+      if ($('nextMessage')) { $('nextMessage').textContent = 'Masuk ke mini game ♡'; $('nextMessage').onclick = () => goToRoom(3); }
+      if ($('messageCounter')) $('messageCounter').textContent = '4 / 4 pesan terbuka';
       return;
     }
-
     stage.innerHTML = '<span class="typing-cursor"></span>';
     const text = messages[messageIndex];
     let i = 0;
@@ -175,170 +183,77 @@
     const span = document.createElement('span');
     span.className = 'line';
     stage.insertBefore(span, cursor);
-
     const type = () => {
-      if (i < text.length) {
-        span.textContent += text.charAt(i++);
-        setTimeout(type, 24);
-      } else cursor.remove();
+      if (i < text.length) { span.textContent += text.charAt(i++); setTimeout(type, 24); }
+      else cursor?.remove();
     };
-
     type();
     messageIndex++;
-    $('messageCounter').textContent = `${messageIndex} / ${messages.length} pesan terbuka`;
-    $('nextMessage').textContent = messageIndex === messages.length
-      ? 'Baca penutup ♡'
-      : 'Buka pesan berikutnya ✨';
+    if ($('messageCounter')) $('messageCounter').textContent = `${messageIndex} / ${messages.length} pesan terbuka`;
+    if ($('nextMessage')) $('nextMessage').textContent = messageIndex === messages.length ? 'Baca penutup ♡' : 'Buka pesan berikutnya ✨';
   }
+  $('nextMessage')?.addEventListener('click', () => { messageIndex >= messages.length ? goToRoom(3) : showMessage(); });
 
-  $('nextMessage').addEventListener('click', () => {
-    if (messageIndex >= messages.length) goToRoom(3);
-    else showMessage();
-  });
-
-  function clearGameTimers() {
-    clearInterval(gameTimer);
-    clearInterval(spawnTimer);
-    gameTimer = null;
-    spawnTimer = null;
-  }
-
+  // ROOM 4 GAME - FIX TOTAL
+  function clearGameTimers() { clearInterval(gameTimer); clearInterval(spawnTimer); gameTimer = null; spawnTimer = null; }
   function resetGame() {
     clearGameTimers();
-    gameRunning = false;
-    score = 0;
-    timeLeft = 30;
-    $('score').textContent = score;
-    $('timeLeft').textContent = timeLeft;
-    $('gameArena').querySelectorAll('.falling-heart').forEach(h => h.remove());
-    $('arenaHint').style.display = 'grid';
-    $('arenaHint').textContent = 'Tekan “Mulai bermain” untuk menangkap hati 💕';
-    $('gameResult').textContent = '';
-    $('startGame').disabled = false;
-    $('startGame').textContent = 'Mulai bermain ♡';
+    gameRunning = false; score = 0; timeLeft = 30;
+    if ($('score')) $('score').textContent = score;
+    if ($('timeLeft')) $('timeLeft').textContent = timeLeft;
+    $('gameArena')?.querySelectorAll('.falling-heart').forEach(h => h.remove());
+    if ($('arenaHint')) { $('arenaHint').style.display = 'grid'; $('arenaHint').textContent = 'Tekan “Mulai bermain” untuk menangkap hati 💕'; }
+    if ($('gameResult')) $('gameResult').textContent = '';
+    if ($('startGame')) { $('startGame').disabled = false; $('startGame').textContent = 'Mulai bermain ♡'; }
   }
-
   function spawnHeart() {
     if (!gameRunning) return;
     const arena = $('gameArena');
+    if (!arena) return;
     const heart = document.createElement('button');
     heart.className = 'falling-heart';
     heart.type = 'button';
-    heart.textContent = ['♥', '♡', '💗', '💖'][Math.floor(Math.random() * 4)];
-    heart.setAttribute('aria-label', 'Tangkap hati');
+    heart.textContent = ['♥','♡','💗','💖'][Math.floor(Math.random()*4)];
     heart.style.fontSize = `${22 + Math.random() * 20}px`;
     heart.style.left = `${Math.random() * 88 + 3}%`;
     heart.style.top = '-35px';
-    const duration = 2.4 + Math.random() * 1.8;
-    heart.style.animationDuration = `${duration}s`;
-
+    heart.style.animationDuration = `${2.4 + Math.random() * 1.8}s`;
     heart.addEventListener('click', () => {
       if (!gameRunning) return;
       score++;
-      $('score').textContent = score;
+      if ($('score')) $('score').textContent = score;
+      const now = audioCtx?.currentTime || 0;
+      if (audioCtx) { playNote(523.25, now, 0.08); playNote(659.25, now + 0.05, 0.12); }
       heart.remove();
-      playCatchSound();
-      if (score >= 10) finishGame(true);
     });
-
+    heart.addEventListener('animationend', () => heart.remove());
     arena.appendChild(heart);
-    setTimeout(() => heart.remove(), duration * 1000 + 100);
   }
-
-  function playCatchSound() {
-    if (ensureAudio()) {
-      const now = audioCtx.currentTime;
-      playNote(659.25, now, 0.12, 'sine', 0.12);
-      playNote(783.99, now + 0.07, 0.16, 'sine', 0.1);
-    }
-  }
-
-  function finishGame(won) {
-    if (!gameRunning) return;
-    gameRunning = false;
-    clearGameTimers();
-    $('startGame').disabled = false;
-    $('startGame').textContent = won ? 'Main lagi ♡' : 'Coba lagi ♡';
-    $('arenaHint').style.display = 'grid';
-    $('arenaHint').textContent = won
-      ? 'Kamu berhasil menangkap semua hati! 💖'
-      : 'Waktu habis! Setiap hati tetap untukmu. ♡';
-    $('gameResult').textContent = won
-      ? 'Kejutan terbuka: kamu adalah rumah bagi hati ini. I LOVE YOU! ♥'
-      : `Skor ${score}/10 — yuk coba sekali lagi, kamu pasti bisa!`;
-    $('gameArena').querySelectorAll('.falling-heart').forEach(h => h.remove());
-    if (won) {
-      for (let i = 0; i < 18; i++) setTimeout(createCelebrationHeart, i * 90);
-    }
-  }
-
-  function createCelebrationHeart() {
-    const h = document.createElement('span');
-    h.className = 'floating-heart';
-    h.textContent = ['♥', '♡', '💗'][Math.floor(Math.random() * 3)];
-    h.style.left = `${Math.random() * 100}%`;
-    h.style.bottom = '0';
-    h.style.fontSize = `${14 + Math.random() * 22}px`;
-    h.style.animationDuration = `${3 + Math.random() * 3}s`;
-    document.body.appendChild(h);
-    setTimeout(() => h.remove(), 6500);
-  }
-
-  $('startGame').addEventListener('click', () => {
-    if (gameRunning) resetGame();
-    startMusic();
-    clearGameTimers();
-    score = 0;
-    timeLeft = 30;
+  function startGame() {
+    resetGame();
     gameRunning = true;
-    $('score').textContent = score;
-    $('timeLeft').textContent = timeLeft;
-    $('arenaHint').style.display = 'none';
-    $('gameResult').textContent = 'Semangat, tangkap hati-hatinya! 💘';
-    $('startGame').disabled = true;
-    spawnHeart();
-    spawnTimer = setInterval(spawnHeart, 620);
+    if ($('arenaHint')) $('arenaHint').style.display = 'none';
+    if ($('startGame')) { $('startGame').disabled = true; $('startGame').textContent = 'Bermain...'; }
     gameTimer = setInterval(() => {
       timeLeft--;
-      $('timeLeft').textContent = timeLeft;
-      if (timeLeft <= 0) finishGame(score >= 10);
+      if ($('timeLeft')) $('timeLeft').textContent = timeLeft;
+      if (timeLeft <= 0) {
+        clearGameTimers();
+        gameRunning = false;
+        if ($('gameResult')) $('gameResult').textContent = `Kamu dapat ${score} hati! ${score >= 10 ? 'Kejutan terbuka! ♡' : 'Coba lagi yaa 💕'}`;
+        if ($('startGame')) { $('startGame').disabled = false; $('startGame').textContent = 'Main lagi ♡'; }
+        if ($('arenaHint')) { $('arenaHint').style.display = 'grid'; $('arenaHint').textContent = 'Waktu habis!'; }
+      }
     }, 1000);
-  });
+    spawnTimer = setInterval(spawnHeart, 450);
+  }
+  $('startGame')?.addEventListener('click', () => { ensureAudio(); startMusic(); startGame(); });
+  $('replayGame')?.addEventListener('click', resetGame);
+  $('restartJourney')?.addEventListener('click', () => { resetGame(); messageIndex = 0; goToRoom(0); showToast('Balik ke awal lagi ♡'); });
+  $('musicToggle')?.addEventListener('click', () => { musicOn ? stopMusic() : startMusic(); });
 
-  $('replayGame').addEventListener('click', resetGame);
-
-  $('restartJourney').addEventListener('click', () => {
-    resetGame();
-    messageIndex = 0;
-    $('nextMessage').onclick = null;
-    $('nextMessage').textContent = 'Buka pesan berikutnya ✨';
-    $('firstNote').textContent = 'Pilih dengan hati, ya. ✨';
-    noBtn.style.transform = '';
-    goToRoom(0);
-  });
-
-  $('musicToggle').addEventListener('click', () => {
-    if (musicOn) stopMusic();
-    else startMusic();
-  });
-
-  setInterval(() => {
-    if (document.hidden) return;
-    const holder = $('floatingHearts');
-    const h = document.createElement('span');
-    h.className = 'floating-heart';
-    h.textContent = Math.random() > 0.5 ? '♡' : '♥';
-    h.style.left = `${Math.random() * 100}%`;
-    h.style.fontSize = `${10 + Math.random() * 17}px`;
-    h.style.animationDuration = `${8 + Math.random() * 8}s`;
-    holder.appendChild(h);
-    setTimeout(() => h.remove(), 17000);
-  }, 1500);
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden && musicOn) backgroundMusic.pause();
-    else if (!document.hidden && musicOn) backgroundMusic.play().catch(() => {});
-    if (document.hidden && audioCtx) audioCtx.suspend();
-    else if (!document.hidden && audioCtx) audioCtx.resume();
-  });
+  // INIT + BIND LOGIN
+  $('loginForm')?.addEventListener('submit', handleLogin);
+  checkExistingLogin();
+  resetGame();
 })();
