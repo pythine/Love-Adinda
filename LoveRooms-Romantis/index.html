@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#16091f" />
+  <title>Untuk Kamu ♡</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="starfield" aria-hidden="true"></div>
+  <div class="floating-hearts" id="floatingHearts" aria-hidden="true"></div>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">♡</span><span>little love universe</span></div>
+    <div class="top-actions"><span id="roomLabel">RUANG 01 / 04</span><button class="music-toggle" id="musicToggle" aria-label="Putar atau jeda musik">♫ <span id="musicState">Musik mati</span></button></div>
+  </header>
+
+  <main>
+    <section class="room active" id="room1" aria-labelledby="introTitle">
+      <div class="intro-card glass">
+        <div class="eyebrow"><span class="pulse-dot"></span> PESAN KECIL UNTUK ORANG SPESIAL</div>
+        <div class="big-heart" aria-hidden="true">♥</div>
+        <p class="script small-script">Hyy, Adindaa...</p>
+        <h1 id="introTitle">Selamat datang!! <span>Ini adalah web yang kubuat</span><br/>Khusus buat kamu</h1>
+        <p class="intro-copy">Aku menyiapkan sebuah tempat kecil berisi hal-hal manis. Nggak mewah, tapi semuanya dibuat dengan hati—khusus untuk kamu. 💗</p>
+        <div class="choice-row" id="firstChoices">
+          <button class="btn btn-yes" id="firstYes">Yes, boleh ♡</button>
+          <button class="btn btn-no" id="firstNo">No, nggak mau</button>
+        </div>
+        <p class="tiny-note" id="firstNote">Pilih dengan hati, ya. ✨</p>
+      </div>
+    </section>
+
+    <section class="room" id="room2" aria-labelledby="certTitle">
+      <div class="room-heading"><p class="eyebrow"> · BUKTI KECIL</p><h2>Ini untuk <span>kamu</span> ♡</h2><p class="muted">Sebuah sertifikat yang mungkin sederhana, tapi niatnya sungguh-sungguh.</p></div>
+      <article class="certificate">
+        <div class="cert-corner corner-tl">✦</div><div class="cert-corner corner-tr">✦</div><div class="cert-corner corner-bl">✦</div><div class="cert-corner corner-br">✦</div>
+        <div class="cert-topline">THE LITTLE LOVE SOCIETY</div>
+        <button class="cert-logo" id="logoPopup" aria-label="Buka logo kejutan"><span>♡</span><i>✦</i></button>
+        <p class="cert-kicker">DENGAN PENUH KASIH</p>
+        <h2 id="certTitle">Sertifikat <em>Orang Terbaik</em></h2>
+        <p class="cert-desc" style="text-shadow:2px 2px 4px yellow;">Dengan ini menyatakan bahwa</p>
+        <div class="recipient" contenteditable="true" aria-label="Nama pasangan, klik untuk mengubah" style="text-shadow:2px 2px 4px aqua;">[ Adindaa ]</div>
+        <p class="cert-desc cert-body" style="text-shadow:2px 2px 4px yellow;">resmi memiliki tempat istimewa di hatiku. Berlaku hari ini, besok, dan selama kita terus saling memilih.</p>
+        <div class="cert-bottom"><div><span class="signature">Dengan cinta,</span><strong>Si Paling Sayang ♡</strong></div><div class="seal">LOVE<br/>APPROVED</div></div>
+        <div class="cert-date">DIBUAT DENGAN HATI · ∞</div>
+      </article>
+      <div class="choice-row cert-choices"><button class="btn btn-yes" id="certYes">Aku terima ♡</button><button class="btn btn-no" id="certNo">Aku pikir-pikir dulu</button></div>
+      <p class="tiny-note" id="certNote">Jangan lupa klik Logo di tengah sertifikat itu yaa. ✨</p>
+    </section>
+
+    <section class="room" id="room3" aria-labelledby="loveTitle">
+      <div class="neon-panel glass">
+        <p class="eyebrow">Wihh, akhirnya · Sampai Jugaa</p>
+        <div class="neon-heart">♥</div>
+        <h2 id="loveTitle" class="neon-title">Untuk kamu, satu-satunya.</h2>
+        <div class="message-stage" id="messageStage"><span class="typing-cursor"></span></div>
+        <p class="message-counter" id="messageCounter">0 / 4 pesan terbuka</p>
+        <button class="btn btn-yes" id="nextMessage">Buka pesan berikutnya ✨</button>
+        <p class="tiny-note" style="text-shadow:2px 2px 4px gold;">Baca pelan-pelan, anggap saja aku sedang bicara langsung padamu.</p>
+      </div>
+    </section>
+
+    <section class="room" id="room4" aria-labelledby="gameTitle">
+      <div class="game-wrap glass">
+        <p class="eyebrow">MAIN SEBENTAR YA · MINI LOVE GAME</p>
+        <h2 id="gameTitle">Tangkap hati-hati kecilku! <span>♡</span></h2>
+        <p class="muted">Klik atau sentuh hati yang jatuh sebelum menghilang. Kumpulkan 10 hati untuk membuka kejutan.</p>
+        <div class="game-stats"><span>♡ Skor: <strong id="score">0</strong> / 10</span><span>⏳ Waktu: <strong id="timeLeft">30</strong>s</span></div>
+        <div class="game-arena" id="gameArena" aria-label="Area permainan menangkap hati"><div class="arena-hint" id="arenaHint">Tekan “Mulai bermain” untuk menangkap hati 💕</div></div>
+        <div class="game-controls"><button class="btn btn-yes" id="startGame">Mulai bermain ♡</button><button class="btn btn-secondary" id="replayGame">Ulangi</button></div>
+        <div class="game-result" id="gameResult" aria-live="polite"></div>
+        <button class="text-button" id="restartJourney">↶ Kembali ke awal</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>dibuat dengan banyak rasa sayang <span>♥</span> untuk kamu</footer>
+
+  <div class="modal-backdrop" id="logoModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="love-modal glass"><button class="modal-close" id="closeModal" aria-label="Tutup">×</button><div class="modal-orbit"><div class="modal-heart">♥</div></div><p class="eyebrow">A LITTLE SECRET</p><h2 id="modalTitle">Kamu adalah <span>favoritku.</span></h2><p>Kalau aplikasi ini punya logo, logonya adalah hati. Kalau hatiku punya logo, mungkin bentuknya adalah kamu. 💗</p><button class="btn btn-yes" id="modalOkay">Awww, lanjut ♡</button></div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="script.js"></script>
+</body>
+</html>
