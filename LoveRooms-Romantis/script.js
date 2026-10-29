@@ -1,10 +1,7 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-
-  // ========== SETTING LOGIN DI SINI ==========
-  const VALID_USER = "adinda"; // ganti username
-  const VALID_PASS = "sayang";  // ganti password
-  // ===========================================
+  const VALID_USER = "adinda";
+  const VALID_PASS = "sayang";
 
   const rooms = ['room1', 'room2', 'room3', 'room4'];
   let currentRoom = 0;
@@ -44,7 +41,7 @@
     if (index === 2 && messageIndex === 0) showMessage();
   }
 
-  // ========== LOGIC LOGIN BARU ==========
+  // ========== LOGIC LOGIN FIX - MUNCUL TIAP BUKA ==========
   function handleLogin(e) {
     e.preventDefault();
     const user = $('loginUsername')?.value.trim().toLowerCase() || "";
@@ -52,7 +49,6 @@
     const errorEl = $('loginError');
 
     if (user === VALID_USER && pass === VALID_PASS) {
-      // Sukses
       if (errorEl) errorEl.textContent = "";
       const gate = $('loginGate');
       if (gate) {
@@ -61,13 +57,14 @@
         gate.style.transform = "scale(1.05)";
         setTimeout(() => {
           gate.style.display = "none";
+          gate.style.opacity = "1";
+          gate.style.transform = "scale(1)";
           goToRoom(0);
           firstChoice();
           showToast(`Hai Adinda! Selamat datang ♡`);
         }, 600);
       }
-      // simpan login biar gak login lagi
-      localStorage.setItem('isLoggedIn', 'true');
+      // HAPUS localStorage BIAR LOGIN MUNCUL TERUS
     } else {
       if (errorEl) errorEl.textContent = "Username atau password salah, coba lagi yaa 🙈";
       const card = document.querySelector('.login-card');
@@ -77,18 +74,15 @@
     }
   }
 
-  // Cek kalau sudah pernah login
   function checkExistingLogin() {
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-      const gate = $('loginGate');
-      if (gate) gate.style.display = "none";
-      goToRoom(0);
-    } else {
-      // pastikan loginGate kelihatan
-      const gate = $('loginGate');
-      if (gate) gate.style.display = "flex";
-      rooms.forEach(id => $(id)?.classList.remove('active'));
+    // FIX: Selalu tampilkan login tiap buka web
+    const gate = $('loginGate');
+    if (gate) {
+      gate.style.display = "flex";
+      gate.style.opacity = "1";
     }
+    rooms.forEach(id => $(id)?.classList.remove('active'));
+    // kalau mau langsung masuk room1 tanpa login, hapus 2 baris di atas dan pakai goToRoom(0)
   }
   // ======================================
 
@@ -138,7 +132,6 @@
   }
   function firstChoice() { startMusic(); ensureAudio(); }
 
-  // ROOM 1
   $('firstYes')?.addEventListener('click', () => { firstChoice(); goToRoom(1); showToast('Yay! Satu langkah lebih dekat ke hatiku. ♡'); });
   const noBtn = $('firstNo');
   function dodgeNo() {
@@ -151,7 +144,6 @@
   noBtn?.addEventListener('pointerenter', dodgeNo);
   noBtn?.addEventListener('click', (e) => { e.preventDefault(); firstChoice(); dodgeNo(); });
 
-  // ROOM 2
   $('certYes')?.addEventListener('click', () => { startMusic(); goToRoom(2); });
   $('certNo')?.addEventListener('click', () => {
     const btnNo = $('certNo');
@@ -166,7 +158,6 @@
   $('modalOkay')?.addEventListener('click', closeModal);
   $('logoModal')?.addEventListener('click', e => { if (e.target === $('logoModal')) closeModal(); });
 
-  // ROOM 3
   function showMessage() {
     const stage = $('messageStage');
     if (!stage) return;
@@ -194,7 +185,6 @@
   }
   $('nextMessage')?.addEventListener('click', () => { messageIndex >= messages.length ? goToRoom(3) : showMessage(); });
 
-  // ROOM 4 GAME - FIX TOTAL
   function clearGameTimers() { clearInterval(gameTimer); clearInterval(spawnTimer); gameTimer = null; spawnTimer = null; }
   function resetGame() {
     clearGameTimers();
@@ -252,7 +242,6 @@
   $('restartJourney')?.addEventListener('click', () => { resetGame(); messageIndex = 0; goToRoom(0); showToast('Balik ke awal lagi ♡'); });
   $('musicToggle')?.addEventListener('click', () => { musicOn ? stopMusic() : startMusic(); });
 
-  // INIT + BIND LOGIN
   $('loginForm')?.addEventListener('submit', handleLogin);
   checkExistingLogin();
   resetGame();

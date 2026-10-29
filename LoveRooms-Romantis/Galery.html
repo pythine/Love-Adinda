@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeri Seni Online Premium</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
         /* Pengaturan Dasar & Tipografi */
         * {
             margin: 0;
@@ -60,7 +61,8 @@
         /* Menu Navigasi */
         nav a {
             text-decoration: none;
-            color: #666666;
+            margin:8px;
+            color: white;
             margin-left: 30px;
             font-size: 14px;
             text-transform: uppercase;
@@ -96,7 +98,7 @@
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 10px;
+            gap: 20px;
             max-width: 1400px;
             margin: 0 auto 80px auto;
             padding: 10px 10px;
@@ -106,11 +108,14 @@
         .gallery-item {
             position: relative;
             overflow: hidden;
-            background-color: #f9f9f9;
+            background-color: white;
             cursor: pointer;
+            border-radius:25px;
+            box-shadow: 0 0 25px gold;
+            border: 1px solid black;
         }
         .gallery-item img {
-            width: 80%;
+            width: 100%;
             height: 500px;
             object-fit: cover;
             display: block;
@@ -147,15 +152,27 @@
 
         /* Responsif untuk Layar Handphone */
         @media (max-width: 768px) {
-            header { padding: 20px; flex-direction: column; gap: 15px; text-align: center; }
+            header { padding: 25px; flex-direction: column; gap: 15px; text-align: center; }
             .brand-container { flex-direction: column; gap: 8px; }
-            nav a { margin: 0 10px; }
+            nav a { margin: 0 15px; }
             .artist-profile h1 { font-size: 32px; }
             .gallery-grid { grid-template-columns: 1fr; }
-            .gallery-item img { height: 350px; }
+            .gallery-item img { height: 320px; }
+        }
+    
+        #typewriter::after {
+            content: '|';
+            animation: blink 0.8s infinite;
+            margin-left: 4px;
+            color: #ff8fb5;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
     </style>
-</head>
+ </head>
+   
 <body>
 
     <!-- Navigasi Atas -->
@@ -164,20 +181,21 @@
         <div class="brand-container">
             <!-- GANTI 'profil.jpg' dengan file foto profil Anda sendiri -->
             <img src="photo.jpeg" alt="Logo Profil" class="profile-img">
-            <div class="logo">Adinda Gallery</div>
+            <div class="logo">Adinda Old Shop</div>
         </div>
         
         <nav>
-            <a href="#">Koleksi</a>
-            <a href="#">Tentang Saya</a>
-            <a href="#">Kontak</a>
+            <a href="koleksi.html" style="border:1px solid black;margin:2px;padding:4px 6px;background:linear-gradient(45deg,aqua,gold,aqua);border-radius:15px;">Koleksi</a>
+            <a href="saya.html" style="border:1px solid black;margin:2px;padding:4px 6px;background:linear-gradient(45deg,aqua,green,aqua);border-radius:15px;">Tentang Saya</a>
+            <a href="kontak.html" style="border:1px solid black;margin:2px;padding:4px 6px;background:linear-gradient(45deg,aqua,pink,aqua);border-radius:15px;">Kontak</a>
+            <a href="photo.html" style="border:1px solid black;margin:2px;padding:4px 6px;background:linear-gradient(45deg,aqua,red,aqua);border-radius:15px;">Photo</a>
         </nav>
     </header>
 
     <!-- Header Profil Seniman -->
     <section class="artist-profile">
-        <h1>Nama Anda / Nama Koleksi</h1>
-        <p>Tuliskan deskripsi singkat, visi seni, atau konsep dari karya-karya fotografi/lukisan premium yang Anda pamerkan di sini.</p>
+        <h1 id="typewriter"></h1>
+        <p>Selamat datang semuanya, saya adinda, Selamat datang di Old Shopp</p>
     </section>
 
     <!-- Grid Tempat Foto Anda Dimasukkan -->
@@ -187,8 +205,8 @@
         <div class="gallery-item">
             <img src="photo (3).jpeg" alt="Judul Karya 1">
             <div class="item-info">
-                <div class="item-title">Judul Karya Seni I</div>
-                <div class="item-details">Edisi Terbatas • Cetak Kanvas Premium • 2026</div>
+                <div class="item-title">Chiseee</div>
+                <div class="item-details">Upload terbaru • 2026</div>
             </div>
         </div>
 
@@ -196,8 +214,8 @@
         <div class="gallery-item">
             <img src="photo (2).jpeg" alt="Judul Karya 2">
             <div class="item-info">
-                <div class="item-title">Judul Karya Seni II</div>
-                <div class="item-details">Edisi Terbatas • Cetak Logam Premium • 2026</div>
+                <div class="item-title">Old Shopp Adinda</div>
+                <div class="item-details">Edisi Khusus Promoo • 2026</div>
             </div>
         </div>
 
@@ -225,6 +243,22 @@
     <footer>
         &copy; 2026 Hak Cipta Dilindungi Undang-Undang. Dibuat untuk Portofolio Seni Digital.
     </footer>
+    
+<script>
+        const text = "Welcome Adinda Old Shopp";
+        const el = document.getElementById("typewriter");
+        let i = 0;
+
+        function typewriter() {
+            if (i < text.length) {
+                el.textContent += text.charAt(i);
+                i++;
+                setTimeout(typewriter, 110);
+            }
+        }
+        window.addEventListener('load', typewriter);
+        </script>
+
 
 </body>
 </html>

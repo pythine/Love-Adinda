@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Both Photobooth LDR ♡</title>
+<style>
+  body{margin:0;background-image:url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZEqJFALClrzn-nepsiPIvHTtIc6WMU5KzHbu00SD5hg&s=10);background-size:;background-position:center;color:white;font-family:sans-serif;text-align:center}
+  .container{max-width:900px;margin:auto;padding:20px}
+  .videos{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  video{width:320px;height:240px;background:#000;border-radius:20px;object-fit:cover;border:3px solid #ff8fb5;transform:scaleX(-1)}
+  .strip{margin:20px auto;display:flex;gap:10px;justify-content:center}
+  canvas{border-radius:15px;background: black}
+  .controls{margin:20px}
+  input,button{padding:12px 20px;border-radius:30px;border:none;margin:5px;font-weight:bold}
+  button{background:#ff4d8f;color:white;cursor:pointer}
+  button:disabled{opacity:0.5}
+  #count{font-size:80px;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;display:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Both Photobooth ♡</h1>
+  <p style="color:green;">Foto bareng jarak jauh</p><p style="color:red;"> kamu salin ID di bawah ini terus kirim ke aku ya cantikk</p>
+  
+  <div class="controls">
+    <p>ID Kamu: <b id="myId">loading...</b></p>
+    <input id="friendId" placeholder="Masukkan ID pasangan">
+    <button id="connectBtn">Hubungkan ♡</button>
+  </div>
+
+  <div class="videos">
+    <div><p>Myy</p><video id="myVideo" autoplay muted playsinline></video></div>
+    <div><p style="text-shadow: 2px 2px 4px gold;">Kamu</p><video id="friendVideo" autoplay playsinline></video></div>
+  </div>
+
+  <div class="controls">
+    <button id="captureBtn" disabled>Ambil Foto Berdua 📸</button>
+    <button id="downloadBtn" disabled>Download Strip 💾</button>
+    <a href="Galery.html">
+      <button>KEMBALI</button>
+      </a>
+  </div>
+
+  <div class="strip">
+    <canvas id="result" width="640" height="720"></canvas>
+  </div>
+  <div id="count">3</div>
+</div>
+
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script>
+const myVideo = document.getElementById('myVideo');
+const friendVideo = document.getElementById('friendVideo');
+const myIdText = document.getElementById('myId');
+const friendIdInput = document.getElementById('friendId');
+const connectBtn = document.getElementById('connectBtn');
+const captureBtn = document.getElementById('captureBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const canvas = document.getElementById('result');
+const ctx = canvas.getContext('2d');
+const countEl = document.getElementById('count');
+
+let myStream;
+let peer;
+let shots = [];
+
+// 1. Buka kamera
+navigator.mediaDevices.getUserMedia({video:true, audio:true}).then(s=>{
+  myStream = s;
+  myVideo.srcObject = s;
+});
+
+// 2. Buat Peer ID
+peer = new Peer();
+peer.on('open', id => myIdText.textContent = id);
+peer.on('call', call => {
+  call.answer(myStream);
+  call.on('stream', stream => {
+    friendVideo.srcObject = stream;
+    captureBtn.disabled = false;
+  });
+});
+
+connectBtn.onclick = () => {
+  const fid = friendIdInput.value.trim();
+  if(!fid) return alert('Masukin ID dia dulu!');
+  const call = peer.call(fid, myStream);
+  call.on('stream', stream => {
+    friendVideo.srcObject = stream;
+    captureBtn.disabled = false;
+  });
+};
+
+// 3. Foto Berdua
+captureBtn.onclick = async () => {
+  shots = [];
+  for(let k=0;k<3;k++){
+    await countdown(3);
+    takeOne(k);
+    await new Promise(r=>setTimeout(r,600));
+  }
+  drawStrip();
+  downloadBtn.disabled = false;
+};
+
+function countdown(n){
+  return new Promise(res=>{
+    countEl.style.display='block';
+    let c=n;
+    countEl.textContent=c;
+    const timer=setInterval(()=>{
+      c--;
+      if(c>0) countEl.textContent=c;
+      else { clearInterval(timer); countEl.style.display='none'; res(); }
+    },800);
+  });
+}
+
+function takeOne(index){
+  const temp = document.createElement('canvas');
+  temp.width=640; temp.height=240;
+  const tctx = temp.getContext('2d');
+  // gambar kamu + dia berdampingan
+  tctx.drawImage(myVideo, 0, 0, 320, 240);
+  tctx.drawImage(friendVideo, 320, 0, 320, 240);
+  shots[index]=temp;
+}
+
+function drawStrip(){
+  ctx.fillStyle='white';
+  ctx.fillRect(0,0,640,720);
+  ctx.fillStyle='#16091f';
+  ctx.font='bold 20px sans-serif';
+  ctx.fillText('Both Photobooth ♡ - '+ new Date().toLocaleDateString(), 20, 30);
+  shots.forEach((s,i)=>{
+    ctx.drawImage(s, 20, 50 + i*220, 600, 200);
+  });
+  ctx.fillText('made with love', 20, 710);
+}
+
+downloadBtn.onclick = ()=>{
+  const a=document.createElement('a');
+  a.download='both-photobooth-adinda.jpg';
+  a.href=canvas.toDataURL('image/jpeg');
+  a.click();
+}
+</script>
+</body>
+</html>
